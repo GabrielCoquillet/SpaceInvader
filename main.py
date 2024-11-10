@@ -79,6 +79,7 @@ class App:
             for ennemi in self.ennemi1.get_ennemi():
                 pass
 
+
     def update(self):
         self.ship.move()
         self.shots.add_shot(self.ship.getx(), self.ship.gety())
