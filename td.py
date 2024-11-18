@@ -1,4 +1,6 @@
 import pyxel, random
+from pyxel.pyxel_wrapper import circb
+
 
 class Jeu():
     TITLE = "The Last Space"
@@ -40,6 +42,7 @@ class Jeu():
             if (self.vaisseaux <= ennemi[0] and self.vaisseaux+8>=ennemi[0] and self.vaisseauy+8 >= ennemi[1] and self.vaisseauy <= ennemi[1]) or (ennemi[0]+8>= self.vaisseaux and ennemi[0]<= self.vaisseaux and ennemi[1]+8 >= self.vaisseauy and ennemi[1]<=self.vaisseauy):
                 self.vies-=1
                 self.ennemi_li.remove(ennemi)
+                self.explosioncreation(self.vaisseaux,self.vaisseauy)
     def ennemicreation(self):
         if pyxel.frame_count%30 == 0:
             co = [random.randint(0,120), 0]
@@ -57,10 +60,14 @@ class Jeu():
                     self.score+=1
                     self.tirs_li.remove(tir)
                     self.ennemi_li.remove(ennemi)
+                    self.explosioncreation(ennemi[0], ennemi[1])
     def explosioncreation(self,x,y):
         self.explosionli.append([x,y,0])
     def explosionannimation(self):
-        pass
+        for explosion in self.explosionli:
+            explosion[2]+=1
+            if explosion[2]==12:
+                self.explosionli.remove(explosion)
     def update(self):
         self.vaisseaudeplacement()
         self.tirs_creation()
@@ -69,6 +76,7 @@ class Jeu():
         self.ennemideplacement()
         self.vaisseausuppression()
         self.ennemissuppressions()
+        self.explosionannimation()
 
     def draw(self):
         pyxel.cls(0)
@@ -78,7 +86,11 @@ class Jeu():
                 pyxel.rect(tir[0], tir[1], 1,4,10)
             for ennemi in self.ennemi_li:
                 pyxel.rect(ennemi[0], ennemi[1],8,8,3)
+            for explosion in self.explosionli:
+                circb(explosion[0]+4, explosion[1]+4, explosion[2],8+explosion[2]%3)
             pyxel.text(5,5, f"SCORE : {self.score}",7)
+            pyxel.text(90,5, f"VIES : {self.vies}",7)
         else:
             pyxel.text(60,60,"GAME OVER",7)
+
 jeu = Jeu()
